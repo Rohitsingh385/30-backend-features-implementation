@@ -18,5 +18,18 @@ export const searchUsersQuerySchema = z.object({
         .int()
         .min(1)
         .max(50)
-        .default(10)
+        .default(10),
+    status: z
+        .enum(["active", "inactive"])
+        .optional(),
+    role: z
+        .enum(["user", "admin"])
+        .optional(),
+    sort: z 
+        .enum([
+            "newest",
+            "oldest"
+        ])
+        .optional()
+        .default("newest")
 })

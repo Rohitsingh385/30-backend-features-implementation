@@ -22,6 +22,16 @@ const userSchema = new mongoose.Schema({
    bio: {
     type: String,
     default: ""
+   },
+   status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active"
+   },
+   role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user"
    }
 }, {
     timestamps: true
