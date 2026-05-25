@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 
 import { User } from "./user.model.js"
 
+import { escapeRegex } from "../../utils/escape-regex.js";
+
 export const searchUsers = async(req: Request, res: Response)=> {
 
     try{
@@ -14,11 +16,11 @@ export const searchUsers = async(req: Request, res: Response)=> {
             role?: string;
             sort: string;
         };
-
+        const  escapedQuery = escapeRegex(q)
         const skip = (page-1) * limit;
         const query: any = {
             username: {
-                $regex: q,
+                $regex: escapedQuery,
                 $options: "i"
             }
         }
