@@ -4,6 +4,10 @@ import { User } from "./user.model.js"
 
 import { escapeRegex } from "../../utils/escape-regex.js";
 
+import { getPagination } from "../../utils/pagination.js";
+
+import { buildPaginationMeta } from "../../utils/pagination-meta.js";
+
 export const searchUsers = async(req: Request, res: Response)=> {
 
     try{
@@ -17,7 +21,8 @@ export const searchUsers = async(req: Request, res: Response)=> {
             sort: string;
         };
    
-        const skip = (page-1) * limit;
+        const skip = getPagination(page, limit)
+
         const query: any = {
             $text: {
                 $search: q
@@ -29,7 +34,11 @@ export const searchUsers = async(req: Request, res: Response)=> {
         if(role){
             query.role = role;
         }
-        let sortOption = []
+        let sortOption: any = {
+            score: {
+                $meta: "textScore"
+            }
+        }
         if(sort === "newest"){
             sortOption = {
                 createdAt: -1
@@ -46,11 +55,7 @@ export const searchUsers = async(req: Request, res: Response)=> {
                     $meta: "textScore"
                 }
             })
-            .sort({
-                score: {
-                    $meta: "textScore"
-                }
-            })
+            .sort(sortOption)
             .skip(skip)
             .limit(limit),
 
@@ -59,12 +64,11 @@ export const searchUsers = async(req: Request, res: Response)=> {
         res.json({
             data: users,
 
-            pagination:{
+            pagination: buildPaginationMeta(
                 page,
                 limit,
-                total,
-                pages: Math.ceil(total/limit)
-            }
+                total
+            )
         })
     }catch(err){
         res.status(500).json({
