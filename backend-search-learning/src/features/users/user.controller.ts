@@ -16,12 +16,11 @@ export const searchUsers = async(req: Request, res: Response)=> {
             role?: string;
             sort: string;
         };
-        const  escapedQuery = escapeRegex(q)
+   
         const skip = (page-1) * limit;
         const query: any = {
-            username: {
-                $regex: escapedQuery,
-                $options: "i"
+            $text: {
+                $search: q
             }
         }
         if(status){
@@ -42,14 +41,21 @@ export const searchUsers = async(req: Request, res: Response)=> {
             }
         }
         const [users, total] = await Promise.all([
-            User.find(query)
-            .sort(sortOption)
+            User.find(query, {
+                score: {
+                    $meta: "textScore"
+                }
+            })
+            .sort({
+                score: {
+                    $meta: "textScore"
+                }
+            })
             .skip(skip)
             .limit(limit),
-            
+
             User.countDocuments(query)
         ])
-
         res.json({
             data: users,
 
