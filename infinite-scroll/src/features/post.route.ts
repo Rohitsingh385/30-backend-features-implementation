@@ -8,6 +8,8 @@ import { postController} from "./post.controller.js"
 
 const router = Router();
 
-router.get('/post', validate(postPaginationQuery), postController)
+console.log('router start');
+
+router.get('/', validate(postPaginationQuery), postController)
 
 export default router;
