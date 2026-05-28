@@ -6,12 +6,14 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsx watch src/index.ts"
+    "start": "tsx watch src/index.ts",
+    "seed": "npx tsx src/seed/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^10.4.0",
     "express": "^5.2.1",
     "mongoose": "^9.6.3",
     "zod": "^4.4.3"

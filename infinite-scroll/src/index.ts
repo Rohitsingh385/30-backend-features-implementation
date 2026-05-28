@@ -6,6 +6,9 @@ const app = express()
 
 app.use(express.json())
 
+// app.use('/', (req,res)=> {
+//     res.json('health ok')
+// })
 app.use('/post', postRoute)
 
 const startServer = async()=> {

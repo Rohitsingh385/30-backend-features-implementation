@@ -5,14 +5,12 @@ const postSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        minLength: 10,
-        maxLength: 50
+        minLength: 5,
     },
     content: {
         type: String,
         required: true,
-        minLength: 10,
-        maxLength: 50
+        minLength: 10
     },
     author: {
         name: {

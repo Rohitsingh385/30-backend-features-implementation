@@ -1,4 +1,4 @@
-import type{Request, Response} from "express"
+import type { Request, Response } from "express"
 
 import postModel from "./post.model.js"
 
@@ -6,10 +6,10 @@ import { getPagination } from "../utils/pagination.js"
 import { sortData } from "../utils/sorting.js"
 
 
-export const postController = async(req: Request, res: Response)=> {
-    try{
+export const postController = async (req: Request, res: Response) => {
+    try {
 
-        const {page =1, limit =5, sortBy ="newest"} = req.query as unknown as{
+        const { page = 1, limit = 5, sortBy = "newest" } = req.query as unknown as {
             page: number,
             limit: number,
             sortBy: string
@@ -18,7 +18,7 @@ export const postController = async(req: Request, res: Response)=> {
         const currentPage = Number(page);
         const currentLimit = Number(limit)
 
-        const {skip} = getPagination(currentPage, currentLimit)
+        const { skip } = getPagination(currentPage, currentLimit)
 
         const sortOptions = sortData(String(sortBy));
 
@@ -27,8 +27,30 @@ export const postController = async(req: Request, res: Response)=> {
             .skip(skip)
             .limit(currentLimit)
 
+        const total = await postModel.countDocuments();
+        const totalPages = Math.ceil(
+            total / currentLimit
+        );
 
-    }catch(error){
+        const pagination = {
+            total,
+            totalPages,
+            currentPage,
+            hasNextPage: currentPage < totalPages,
+            hasPrevPage: currentPage > 1
+        }
+        console.log({
+            total,
+            totalPages,
+            currentPage,
+            hasNextPage: currentPage < totalPages,
+            hasPrevPage: currentPage > 1
+        })
+        return res.status(200).json({
+            data: posts,
+            pagination
+        })
+    } catch (error) {
         res.status(500).json({
             message: 'ops something went wrong'
         })
