@@ -8,30 +8,30 @@ import { getPagination } from "../../utils/pagination.js";
 
 import { buildPaginationMeta } from "../../utils/pagination-meta.js";
 
-export const searchUsers = async(req: Request, res: Response)=> {
+export const searchUsers = async (req: Request, res: Response) => {
 
-    try{
+    try {
 
-        const {q, page, limit, status, role, sort} = req.query as unknown as {
+        const { q, page, limit, status, role, sort } = req.query as unknown as {
             q: string;
             page: number;
             limit: number;
-            status? : string;
+            status?: string;
             role?: string;
             sort: string;
         };
-   
-        const skip = getPagination(page, limit)
+
+        const { skip } = getPagination(page, limit)
 
         const query: any = {
             $text: {
                 $search: q
             }
         }
-        if(status){
+        if (status) {
             query.status = status;
         }
-        if(role){
+        if (role) {
             query.role = role;
         }
         let sortOption: any = {
@@ -39,12 +39,12 @@ export const searchUsers = async(req: Request, res: Response)=> {
                 $meta: "textScore"
             }
         }
-        if(sort === "newest"){
+        if (sort === "newest") {
             sortOption = {
                 createdAt: -1
             }
         }
-        if(sort === "oldest"){
+        if (sort === "oldest") {
             sortOption = {
                 createdAt: 1
             }
@@ -55,9 +55,9 @@ export const searchUsers = async(req: Request, res: Response)=> {
                     $meta: "textScore"
                 }
             })
-            .sort(sortOption)
-            .skip(skip)
-            .limit(limit),
+                .sort(sortOption)
+                .skip(skip)
+                .limit(limit),
 
             User.countDocuments(query)
         ])
@@ -70,9 +70,9 @@ export const searchUsers = async(req: Request, res: Response)=> {
                 total
             )
         })
-    }catch(err){
+    } catch (err) {
         res.status(500).json({
             message: "something went wrong"
         })
-    }   
+    }
 }
