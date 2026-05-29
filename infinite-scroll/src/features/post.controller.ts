@@ -34,7 +34,7 @@ export const postController = async (req: Request, res: Response) => {
         const totalPages = Math.ceil(
             total / currentLimit
         );
-console.log('document counted');
+        console.log('document counted');
         const pagination = {
             total,
             totalPages,
