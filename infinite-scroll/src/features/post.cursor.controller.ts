@@ -20,15 +20,18 @@ export const cursorController = async (req: Request, res: Response) => {
         } else {
             response = await postModel.find({})
                 .sort({ _id: -1 })
-                .limit(limit)
+                .limit(limit+1)
         }
         const lastItem = response[response.length -1];
         const nextCursor = lastItem?._id;
-
+        const hasNextPage = response.length === limit + 1;
+        if(hasNextPage){
+            response.pop()
+        }
         return res.status(200).json({
             data: response,
             nextCursor,
-            hasNextPage: response.length === limit
+            hasNextPage 
         })
 
     } catch (error) {
