@@ -1,0 +1,23 @@
+{
+  "name": "nested-comments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "tsx src/seeds/seed.ts",
+    "dev": "tsx --watch src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^10.4.0",
+    "@types/express": "^5.0.6",
+    "express": "^4.22.2",
+    "mongoose": "^9.6.3",
+    "tsx": "^4.22.3",
+    "zod": "^4.4.3"
+  }
+}
