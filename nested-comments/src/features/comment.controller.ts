@@ -27,3 +27,30 @@ export const commentController = async(req: Request, res: Response)=> {
         })
     }
 }
+
+export const reply = async(req: Request, res: Response)=> {
+    try{
+        const { content, author, postId, parentComment} = req.body;
+        if(!parentComment){
+            return res.json('invalid parent comment id')
+        }
+        const findComment = await commentModel.findById(parentComment)
+        if(!findComment){
+            return res.json({message: 'comment doesnt exists'})
+        }
+        const reply = await commentModel.create({
+            content,
+            author,
+            postId,
+            parentComment
+        })
+        return res.status(200).json({
+            message: 'reply added'
+        })
+    }catch(err){
+        console.log(err)
+        return res.json({
+            message: 'something went wrong'
+        })
+    }
+}

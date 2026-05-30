@@ -18,6 +18,7 @@ const seedData = async () => {
         let users = []
         let posts = []
         let comments = []
+        const replies = []
 
         for (let i = 0; i < 5; i++) {
             users.push({
@@ -61,11 +62,31 @@ const seedData = async () => {
 
                 author: randomUser._id,
 
-                postId: randomPost._id
+                postId: randomPost._id,
+
+                parentComment: null
             })
         }
 
-        await commentModel.insertMany(comments)
+        const createdComments = await commentModel.insertMany(comments)
+
+        for(let i =0; i<10; i++){
+            const randomUser = createdUsers[
+                Math.floor(Math.random()* createdUsers.length)
+            ]
+            const randomParentComment = createdComments[
+                Math.floor(Math.random() * createdComments.length)
+            ]
+
+            replies.push({
+                content: faker.lorem.sentence(),
+                author: randomUser?._id,
+                postId: randomParentComment.postId,
+
+                parentComment: randomParentComment._id 
+            })
+        }
+        await commentModel.insertMany(replies)
     } catch (err) {
         console.error(err)
     }
