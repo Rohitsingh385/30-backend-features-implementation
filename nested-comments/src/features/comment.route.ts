@@ -1,10 +1,11 @@
 import {Router} from "express"
 
-import { commentController, reply } from "./comment.controller.js";
+import { commentController, reply, getreply } from "./comment.controller.js";
 
 const router = Router();
 
 router.get('/comments', commentController)
 router.post('/reply', reply)
+router.get('/replies', getreply)
 
 export default router;

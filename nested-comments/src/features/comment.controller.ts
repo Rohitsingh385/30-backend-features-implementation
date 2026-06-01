@@ -8,14 +8,29 @@ export const commentController = async(req: Request, res: Response)=> {
         const { postId } = req.query as {
             postId: string
         }
-
+     
+        
        const comments =  await commentModel.find({
-            postId: postId
+            postId: postId,
+            parentComment: null
         })
         .populate("author")
         .populate("postId")
        
+        const nestedComments: any[] = [];
 
+        for(const comment of comments){
+            const replies = await commentModel.find({
+                parentComment: comment._id
+            })
+            .populate("author")
+
+            nestedComments.push({
+                ...comment.toObject(),
+                replies: replies
+            })
+        }
+        
         return res.status(200).json({
             comments
         })
@@ -50,6 +65,25 @@ export const reply = async(req: Request, res: Response)=> {
     }catch(err){
         console.log(err)
         return res.json({
+            message: 'something went wrong'
+        })
+    }
+}
+
+export const getreply = async(req: Request, res: Response)=> {
+    try{
+        const {commentId } = req.query as {
+            commentId: string
+        }
+        const replies = await commentModel.find({
+            parentComment: commentId
+        })
+
+        return res.status(200).json({
+            replies
+        })
+    }catch(error){
+        res.status(500).json({
             message: 'something went wrong'
         })
     }

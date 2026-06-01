@@ -87,6 +87,7 @@ const seedData = async () => {
             })
         }
         await commentModel.insertMany(replies)
+        process.exit(0);
     } catch (err) {
         console.error(err)
     }
