@@ -2,6 +2,26 @@ import type { Request, Response } from "express";
 import { commentModel } from "./comment.model.js";
 import { userModel } from "./user.model.js";
 import postModel from "./post.model.js";
+
+const buildReplies = async (parentId: string) => {
+    const replies = await commentModel.find({
+        parentComment: parentId
+    })
+        .populate("author")
+
+    const nestedReplies = [];
+    for (const reply of replies) {
+        const childReplies = await buildReplies(
+            reply._id.toString()
+        )
+        nestedReplies.push({
+            ...reply.toObject(),
+            replies: childReplies
+        })
+    }
+    return nestedReplies
+}
+
 export const commentController = async (req: Request, res: Response) => {
     try {
 
@@ -17,17 +37,28 @@ export const commentController = async (req: Request, res: Response) => {
             .populate("author")
             .populate("postId")
 
+
         const nestedComments: any[] = [];
 
-        for (const comment of comments) {
-            const replies = await commentModel.find({
-                parentComment: comment._id
-            })
-                .populate("author")
+        // for (const comment of comments) {
+        //     const replies = await commentModel.find({
+        //         parentComment: comment._id
+        //     })
+        //         .populate("author")
 
+        //     nestedComments.push({
+        //         ...comment.toObject(),
+        //         replies: replies
+        //     })
+        // }
+
+        for(const comment of comments){
+            const replies = await buildReplies(
+                comment._id.toString()
+            )
             nestedComments.push({
                 ...comment.toObject(),
-                replies: replies
+                replies
             })
         }
 
@@ -50,6 +81,8 @@ export const reply = async (req: Request, res: Response) => {
             return res.json('invalid parent comment id')
         }
         const findComment = await commentModel.findById(parentComment)
+        console.log("findComment");
+        console.log(findComment);
         if (!findComment) {
             return res.json({ message: 'comment doesnt exists' })
         }
@@ -59,6 +92,11 @@ export const reply = async (req: Request, res: Response) => {
             postId,
             parentComment
         })
+        console.log("replies");
+        console.log(reply);
+        
+        const see = await commentModel.findById(parentComment)
+        console.log(see)
         return res.status(200).json({
             message: 'reply added'
         })
@@ -112,6 +150,7 @@ export const getBachData = async (req: Request, res: Response) => {
                 $in: commentIds
             }
         })
+     
 
         const groupedReplies: any = {};
 
@@ -146,3 +185,4 @@ export const getBachData = async (req: Request, res: Response) => {
         })
     }
 }
+
