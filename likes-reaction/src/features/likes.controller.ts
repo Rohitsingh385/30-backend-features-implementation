@@ -67,7 +67,7 @@ export const unlikeController = async (req: Request, res: Response) => {
                     }
                 }
             )
-        }else{
+        } else {
             return res.status(400).json({ message: 'please like it first' })
         }
 
@@ -77,6 +77,139 @@ export const unlikeController = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.log(error);
+        res.status(500).json({
+            message: 'something went wrong'
+        })
+    }
+}
+
+export const toggleLike = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id as string;
+        const userId = req.body.userId;
+
+        const deletedlike = await likeModel.findOneAndDelete({
+            userId: userId,
+            postId: postId
+        })
+
+        if (deletedlike) {
+
+            await postModel.findOneAndDelete({
+                _id: postId
+            }, {
+                $inc: {
+                    likesCount: -1
+                }
+            })
+            return res.status(200).json({
+                message: 'unliked',
+                isLiked: false
+            })
+        } else {
+            await likeModel.create({
+                userId: userId,
+                postId: postId
+            })
+            await postModel.findOneAndUpdate({
+                postId: postId
+            }, {
+                $inc: {
+                    likesCount: 1
+                }
+            })
+            return res.status(201).json({
+                messaged: 'liked',
+                isLiked: true
+            })
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: 'something went wrong'
+        })
+    }
+}
+
+export const getLikedUsers = async (req: Request, res: Reponse) => {
+    try {
+        const postId = req.params.id;
+
+        const response = await likeModel.find({
+            postId: postId
+        })
+            .populate('userId')
+            .populate('postId')
+
+        return res.status(200).json({
+            users: response
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: 'something went wrong'
+        })
+    }
+}
+
+export const checkLiked = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.query.userId;
+
+        const response = await likeModel.findOne({
+            postId: postId,
+            userId: userId
+        })
+
+        if (response) {
+            return res.status(200).json({
+                isLiked: true
+            })
+        } else {
+            return res.status(200).json({
+                isLiked: false
+            })
+        }
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'something went wrong '
+        })
+    }
+}
+
+export const likeData = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.query.userId;
+
+        const like = await likeModel.findOne({
+            postId: postId,
+            userId: userId
+        })
+
+        const response = await postModel.findOne({
+            _id: postId
+        })
+
+        if (like) {
+            return res.status(200).json({
+                response,
+                isLiked: true
+            })
+        } else {
+            return res.status(200).json({
+                response,
+                isLiked: false
+            })
+        }
+
+
+    } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: 'something went wrong'
         })
