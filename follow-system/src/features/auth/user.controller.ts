@@ -3,12 +3,13 @@ import jwt from "jsonwebtoken"
 import { signupSchema, loginSchema } from "./user.validation.js"
 import { signUpModel } from "./user.model.js"
 import bcrypt from "bcryptjs"
-const JWT_SECRET = 'donotStoreJwtLikeThis'
+export const JWT_SECRET = 'donotStoreJwtLikeThis'
+
 export const signup = async (req: Request, res: Response) => {
 
     try {
         const body = signupSchema.parse(req.body)
-
+        
         const { name, email, password } = body;
 
         const checkExisting = await signUpModel.findOne({
@@ -19,34 +20,35 @@ export const signup = async (req: Request, res: Response) => {
                 message: 'user already exists'
             })
         }
-         const hashPassword = bcrypt.hash(password, 10)
-        const newUser = await signUpModel.create({
+        const hashPassword = await bcrypt.hash(password, 10)
+
+        const user = await signUpModel.create({
             name: name,
             email: email,
-            password:
+            password: hashPassword
         })
 
-        const token = jwt.sign({ email: newUser.email }, JWT_SECRET, { expiresIn: '1h' })
-
-        return res.status(200).json({
+        
+        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' })
+        return res.status(201).json({
             message: 'user registered',
             token: token,
             user: {
-                id: newUser._id,
-                name: newUser.name,
-                email: newUser.email
+                id: user._id,
+                name: user.name,
+                email: user.email
             }
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        res.status(400).json({
             message: 'something went wrong'
         })
     }
 
 
 }
-export const login = async (req: Request, res: Response) => {
+export const signin = async (req: Request, res: Response) => {
     try {
 
         const body = loginSchema.parse(req.body);
@@ -60,10 +62,17 @@ export const login = async (req: Request, res: Response) => {
             })
         }
 
-        const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: '1h' })
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch || email === unde){
+            return res.status(401).json({
+                message: 'invalid password'
+            })
+        }
+
+        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1h' })
 
         return res.status(200).json({
-            message: 'user registered',
+            message: 'user logged in',
             token: token,
             user: {
                 id: user._id,
