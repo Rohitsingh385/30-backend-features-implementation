@@ -19,8 +19,8 @@ export const authMiddleware = (req : Request,res: Response , next: NextFunction)
     }
     try{
         const decoded = jwt.verify(token, JWT_SECRET);
-        console.log(decoded)
-        console.log(decoded.id)
+        //console.log(decoded)
+        //console.log(decoded.id)
         req.id = decoded.id;
         next()
     }catch(error){
