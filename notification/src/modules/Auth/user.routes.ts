@@ -1,12 +1,12 @@
 import Router from "express"
 import { register, login , me , logout } from "./user.controller.js"
 import { authMiddleware } from "./user.middleware.js"
-const router = Router()
+const User = Router()
 
-router.post('/auth/register', register)
-router.post('/auth/login', login)
+User.post('/auth/register', register)
+User.post('/auth/login', login)
 
-router.get('/auth/me',authMiddleware, me)
-router.post('/auth/logout', logout)
+User.get('/auth/me',authMiddleware, me)
+User.post('/auth/logout', logout)
 
-export  default router
+export  default User
