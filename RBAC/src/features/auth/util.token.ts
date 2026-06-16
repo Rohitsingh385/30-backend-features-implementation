@@ -6,7 +6,7 @@ export interface JwtPayload {
     email?: string;
 }
 
-export const generateAccessToken = (user: IUser): strin => {
+export const generateAccessToken = (user: IUser): string => {
     return jwt.sign(
         {
             userId: user._id,
