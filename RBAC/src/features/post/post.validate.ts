@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-const createPostSchema = z.object({
+export const createPostSchema = z.object({
     body: z.object({
         title: z
             .string({ required_error: 'title is required' })
@@ -11,7 +11,7 @@ const createPostSchema = z.object({
     })
 })
 
-const updatePostSchema = z.object({
+export const updatePostSchema = z.object({
     params: z.object({
         postId: z
             .string()
@@ -27,14 +27,14 @@ const updatePostSchema = z.object({
     }).partial()
 })
 
-const deletePostSchema = z.object({
+export const deletePostSchema = z.object({
     params: z.object({
         postId: z
             .string()
             .regex(/^[0-9a-fA-F]{24}$/, 'Invalid mongoDB ID')
     })
 })
-const getPostSchema = z.object({
+export const getPostSchema = z.object({
     params: z.object({
         postId: z
             .string()

@@ -36,7 +36,6 @@ export const login = async (req: Request<{}, {}, loginInput['body']>, res: Respo
         }
         const accessToken = generateAccessToken(user)
         const refreshToken = generateRefreshToken(user)
-
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -44,7 +43,10 @@ export const login = async (req: Request<{}, {}, loginInput['body']>, res: Respo
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
-        return res.json({ accessToken, userId: user._id})
+        return res.json({ 
+            message: 'logged In',
+            accessToken, 
+            userId: user._id})
     }catch(error: any){
         return res.status(500).json({
             message: 'server error',
@@ -66,7 +68,7 @@ export const refresh = async (req: Request, res: Response): Promise<any> => {
             message: 'User no longer exists'
         })
         const newAccessToken = generateAccessToken(user);
-        return res.status({ accessToken: newAccessToken})
+        return res.status(201).json({ accessToken: newAccessToken})
     }catch(error){
         return res.status(403).json({
             message: 'Forbideen or expired refresh Token'

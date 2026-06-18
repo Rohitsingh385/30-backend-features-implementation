@@ -1,9 +1,9 @@
 import {Schema, Document, model} from "mongoose"
 
-import { createPostInput } from "./post.validate.js"
+
 export interface IPost extends Document{
-    title: createPostInput['body']['title'];
-    content: createPostInput['body']['content'];
+    title: string
+    content: string
     author: Types.ObjectId
 }
 

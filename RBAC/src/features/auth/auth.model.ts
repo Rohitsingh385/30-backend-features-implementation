@@ -1,7 +1,7 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types  } from "mongoose";
 import bcrypt from "bcryptjs"
-
-import { RegisterInput } from "./auth.schema.js";
+import type { NextFunction } from "express";
+import type { RegisterInput}  from "./auth.schema.js";
 
 export interface IUser extends Document{
     email: RegisterInput['body']['email']
@@ -23,13 +23,13 @@ const userSchema = new Schema<IUser>({
     }
 })
 
-userSchema.pre<IUser>('save', async function(next){
-    if(!this.isModified('password')) return next()
+userSchema.pre<IUser>('save', async function(){
+    if(!this.isModified('password')) return ;
     this.password = await bcrypt.hash(this.password, 10)
-    next()
+    
 })
 
-userSchema.methods.comparePassword  = async function(password: strign): Promise <boolean>{
+userSchema.methods.comparePassword  = async function(password: string): Promise <boolean>{
     return bcrypt.compare(password, this.password)
 };
 

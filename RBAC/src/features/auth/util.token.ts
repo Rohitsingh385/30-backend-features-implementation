@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
-import {User, type IUser} from "./auth.model.js"
+import User, {type IUser} from "./auth.model.js"
 
-export interface JwtPayload {
+export interface TokenPayload {
     userId: string;
     email?: string;
 }

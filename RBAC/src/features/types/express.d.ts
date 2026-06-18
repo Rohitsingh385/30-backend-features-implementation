@@ -1,8 +1,8 @@
-import { JwtPayload } from "../auth/util.token.ts";
+import { TokenPayload } from "../auth/util.token.js";
 declare global {
   namespace Express {
     interface Request {
-      user?: JwtPayload;
+      user?: TokenPayload;
     }
   }
 }

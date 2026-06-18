@@ -1,11 +1,10 @@
 import 'dotenv/config'
 import mongoose from "mongoose";
-console.log(process.env.PORT)
-console.log(process.env.MONG_URI)
 export const connectDB = async()=> {
     try{
-        console.log(process.env.MONGO_URI as string)
-        await mongoose.connect(process.env.MONGO_URI)
+        const uri = process.env.MONGO_URI
+        if(!uri) throw new Error("MOONGO DB URI IS NOT DEFINED IN .env")
+        await mongoose.connect(uri)
     }catch(error){
         console.log(error)
     }
