@@ -1,13 +1,17 @@
 import cookieParser from "cookie-parser";
 import  express from "express";
 import { globalErrorHandler } from "./middleware/globalErrorHandler.js";
-
+import cors from "cors"
 import Auth from "./modules/auth/auth.route.js"
 
 const app = express()
-
+app.use(cors({
+    origin: "http://localhost:5173"
+}))
 app.use(express.json())
 app.use(cookieParser())
+
+
 app.get('/', (req,res)=> {
     res.status(200).json({
         success: true,

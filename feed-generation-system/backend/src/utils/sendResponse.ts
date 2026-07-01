@@ -7,7 +7,7 @@ interface ApiResponse<T>{
     data?: T
 }
 
-export const sendResponse = <T>(res: response, payload: ApiResponse<T>)=> {
+export const sendResponse = <T>(res: Response, payload: ApiResponse<T>)=> {
     return res.status(payload.statusCode).json({
         success: payload.success,
         message: payload.message,

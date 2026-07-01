@@ -22,11 +22,19 @@ export const login = asyncHandler(async(req,res)=> {
     })
 })
 
-export const getMe = asyncHandler(async(requestAnimationFrame,res)=> {
+export const getMe = asyncHandler(async(req,res)=> {
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Current user fetched succesfully",
-        data: requestAnimationFrame.user
+        data: req.user
+    })
+})
+
+export const logout = asyncHandler(async(req ,res)=> {
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "User logged out"
     })
 })

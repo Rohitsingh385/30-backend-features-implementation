@@ -21,6 +21,7 @@ export default function Register() {
         e.preventDefault();
 
         await registerUser(formData)
+        
         navigate("/login")
     }
     return (
