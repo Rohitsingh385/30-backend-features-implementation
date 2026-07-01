@@ -3,6 +3,7 @@ import { useState } from "react"
 import type { LoginRequest } from "../types/auth"
 import { loginUser } from "../api/auth"
 import axios from "axios"
+import Input from "../components/Input"
 export default function Login() {
 
     const [formData, setFormData] = useState<LoginRequest>({
@@ -39,39 +40,55 @@ export default function Login() {
         }
     }
     return (
-        <>
-            {error && (
-                <p>{error}</p>
-            )}
-            <form onSubmit={handleSubmit}>
-
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="w-full max-w-md rounded-lg border bg-white p-8 shadow">
+                {error && (
+                    <p>{error}</p>
+                )}
+                <h1 className="text-3xl font-bold">
+                    Login
+                </h1>
+                <p className="mt-2 text-gray-500">
+                    Create your account
+                </p>
+                <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+                    <Input
+                        label="Email"
                         type="email"
                         name="email"
-                        id="email"
-                        onChange={handleChange}
                         value={formData.email}
+                        onChange={handleChange}
                     />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
+                    <Input
+                        label="Password"
                         type="password"
                         name="password"
-                        id="password"
-                        onChange={handleChange}
                         value={formData.password}
+                        onChange={handleChange}
                     />
-                </div>
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                >
-                    {isLoading ? "Logging in..." : "Login"}
-                </button>
-            </form>
-        </>
+                    <button
+                        className="
+                    w-full
+                    rounded-md
+                    bg-blue-600
+                    py-2
+                    font-medium
+                    text-white
+                    hover:bg-blue-700
+                    disabled:opacity-50
+                    disabled:cursor-not-allowed
+                    "
+                        type="submit"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Logging in..." : "Login"}
+                    </button>
+                </form>
+                <p className=" mt-2 text-center text-sm">
+                    Already have an account?
+                </p>
+            </div>
+
+        </div>
     )
 }

@@ -2,7 +2,7 @@ import { useState } from "react"
 import type { RegisterRequest } from "../types/auth"
 import { registerUser } from "../api/auth"
 import { useNavigate } from "react-router-dom"
-
+import Input from "../components/Input"
 export default function Register() {
     const [formData, setFormData] = useState<RegisterRequest>({
         username: "",
@@ -17,46 +17,56 @@ export default function Register() {
             [name]: value
         }))
     }
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         await registerUser(formData)
-        
+
         navigate("/login")
     }
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="Username">Username</label>
-                <input
-                 type="text"
-                 onChange={handleChange} 
-                 name="username"
-                 id="username"
-                 value={formData.username} 
-                />
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="w-full max-w-md rounded-lg border bg-white p-8 shadow">
+                <h1 className="text-3xl font-bold">
+                    Register
+                </h1>
+                <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+                    <Input
+                        label="Email"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                    <Input
+                        label="Username"
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                    />
+                    <Input
+                        label="Password"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                    <button className="
+                    w-full
+                    rounded-md
+                    bg-blue-600
+                    py-2
+                    font-medium
+                    text-white
+                    hover:bg-blue-700
+                    disabled:opacity-50
+                    disabled:cursor-not-allowed
+                    "
+
+                        type="submit">Register</button>
+                </form>
             </div>
-            <div>
-                <label htmlFor="email">Email</label>
-                <input 
-                 type="email" 
-                 onChange={handleChange} 
-                 value={formData.email}
-                 name="email"
-                 id="email"
-                />
-            </div>
-            <div>
-                <label htmlFor="password">Password</label>
-                <input 
-                 type="password" 
-                 onChange={handleChange}
-                 value={formData.password} 
-                 name="password" 
-                 id="password"
-                />
-            </div>
-            <button type="submit">Register</button>
-        </form>
+        </div >
     )
 }
