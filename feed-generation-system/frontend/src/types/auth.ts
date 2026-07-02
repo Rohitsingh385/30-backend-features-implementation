@@ -9,7 +9,7 @@ export interface LoginRequest {
     password: string;
 }
 export interface User {
-    email: ReactNode;
+    email: string;
     _id: string;
     username: string;
     passoword: string;

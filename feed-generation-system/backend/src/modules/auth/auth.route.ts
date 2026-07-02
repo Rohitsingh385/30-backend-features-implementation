@@ -8,5 +8,5 @@ const router = Router()
 router.post('/register', validate(registerSchema), register)
 router.post('/login', validate(loginSchema), login)
 router.get('/me', authMiddleware , getMe)
-router.get('/me', authMiddleware , logout)
+router.get('/logout', authMiddleware , logout)
 export default router
