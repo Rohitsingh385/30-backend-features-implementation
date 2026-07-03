@@ -1,8 +1,12 @@
 import { useState } from "react"
-import type { PostRequest } from "../types/post"
+import type { Post, PostRequest } from "../types/post"
 import { createPost } from "../api/posts"
 import axios from "axios"
-export default function CreatePost(){
+
+interface createPostProps {
+    onPostCreated: (post: Post) => void
+}
+export default function CreatePost({onPostCreated}: createPostProps){
 
     const [formData, setFormData] = useState<PostRequest>({
         content: ""
@@ -26,6 +30,8 @@ export default function CreatePost(){
 
         try{
             const response = await createPost(formData)
+            const newPost = response.data.data 
+            onPostCreated(newPost)
             setFormData({
                 content: ""
             })

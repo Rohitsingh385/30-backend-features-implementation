@@ -1,4 +1,5 @@
 import { Post } from "./post.model.js";
+
 type createPostData = {
     authorId: string;
     content: string;    
@@ -11,3 +12,14 @@ export const createPost = async({authorId, content}: createPostData) => {
     })
     return post
 }
+
+export const getPosts = async() => {
+    const posts = await Post.find()
+        .populate("author", "username")
+        .sort({ createdAt: -1})
+    return posts
+}
+
+
+
+
