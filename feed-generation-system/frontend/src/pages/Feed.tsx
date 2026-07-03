@@ -15,11 +15,11 @@ export default function Feed(){
 
         try{
             const response = await getPost()
-            setPost(response.data.data)
+            setPosts(response.data.data)
         }catch(error){
             if(axios.isAxiosError(error)){
                 setError(
-                    error.response?.data?.message ? "Failed to load posts"
+                    error.response?.data?.message ?? "Failed to load posts"
                 )
             }else{
                 setError("Unexpected Error")
@@ -77,4 +77,3 @@ export default function Feed(){
         </main>
     )
 }
-onPos

@@ -10,6 +10,7 @@ export const createPost = async({authorId, content}: createPostData) => {
         author: authorId,
         content, 
     })
+    await post.populate("author", "username")
     return post
 }
 
