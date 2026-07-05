@@ -4,6 +4,7 @@ import { globalErrorHandler } from "./middleware/globalErrorHandler.js";
 import cors from "cors"
 import Auth from "./modules/auth/auth.route.js"
 import PostRouter from "./modules/posts/post.routes.js"
+import likeRouter from "./modules/like/like.routes.js"
 const app = express()
 app.use(cors({
     origin: "http://localhost:5173"
@@ -21,6 +22,7 @@ app.get('/', (req,res)=> {
 
 app.use('/api/v1/auth', Auth)
 app.use('/api/v1/posts', PostRouter)
+app.use('/api/v1/like', likeRouter)
 
 app.use((req,res)=> {
     res.status(404).json({

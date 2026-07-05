@@ -10,7 +10,7 @@ export const createPostSchema  = z.object({
 export const DeletePostSchema = z.object({
     id: z
         .string()
-        .regex(/$[0-9a-fA-F]{24}$/, "Invalid post ID")
+        .regex(/^[0-9a-fA-F]{24}$/, "Invalid post ID")
 
 })
 export type CreatePostInput = z.infer<typeof createPostSchema>

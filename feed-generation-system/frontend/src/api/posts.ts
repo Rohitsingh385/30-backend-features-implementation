@@ -7,3 +7,7 @@ export const createPost = (data: PostRequest)=> {
 export const getPost = () => {
     return api.get("/posts")
 }
+
+export const deletePost = (postId: string)=> {
+    return api.delete(`/posts/${postId}`)
+}

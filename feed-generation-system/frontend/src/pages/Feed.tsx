@@ -3,77 +3,77 @@ import type { Post } from "../types/post"
 import { getPost } from "../api/posts";
 import axios from "axios";
 import CreatePost from "./CreatePost";
-export default function Feed(){
+import PostCard from "./PostCard";
+import type { User } from "../types/auth";
+import { getCurrentUser } from "../api/auth";
+export default function Feed() {
 
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
-
-    const fetchPosts = async()=> {
+    const [user, setUser] = useState<User | null>(null)
+    const fetchPosts = async () => {
         setLoading(true);
         setError("")
 
-        try{
+        try {
             const response = await getPost()
             setPosts(response.data.data)
-        }catch(error){
-            if(axios.isAxiosError(error)){
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
                 setError(
                     error.response?.data?.message ?? "Failed to load posts"
                 )
-            }else{
+            } else {
                 setError("Unexpected Error")
             }
-        }finally{
+        } finally {
             setLoading(false)
         }
     }
-    useEffect (()=>{
-        fetchPosts()
-    },[])
+    const fetchCurrentUser = async () => {
+        const response = await getCurrentUser();
+        setUser(response.data.data)
+    }
+    useEffect(() => {
+        fetchPosts();
+        fetchCurrentUser();
+    }, [])
 
-    if(loading){
+    if (loading) {
         return <p>Loading posts..</p>
     }
-    if(error){
+    if (error) {
         return <p>{error}</p>
     }
 
     const handlePostCreated = (newPost: Post) => {
-        setPosts((prevPosts)=> [
+        setPosts((prevPosts) => [
             newPost,
             ...prevPosts
         ])
     }
+    const handlePostDeleted = (postId: string) => {
+        setPosts((prevposts) =>
+            prevposts.filter((post) => post._id !== postId)
+        )
+    }
+
     return (
         <main className="max-w-xl mx-auto space-y-4">
             <h1 className="text-2xl font-bold">Feed</h1>
-        {posts.length === 0  && (
-            <p>No posts yet.</p>
-        )}
-        {posts.map((post)=> (
-            <article
-             key={post._id}
-             className="border rounded-lg p-4"
-            >
-
-                <p className="font-semibold">
-                    {post.author.username}
-                </p>
-                <p className="font-semibold">
-                    {post.author.username}
-                </p>
-                <p className="mt-2">
-                    {post.content}
-                </p>
-
-                <div className="mt-3 text-sm text-gray-500">
-                    {post.likesCount} likes. {" "}
-                    {post.commentsCount} comments
-                </div>
-            </article>
-        ))}
-        <CreatePost onPostCreated={handlePostCreated}/>
+            {posts.length === 0 && (
+                <p>No posts yet.</p>
+            )}
+            {posts.map((post) => (
+                <PostCard
+                    key={post._id}
+                    post={post}
+                    currentUserId={user?._id}
+                    onPostDeleted={handlePostDeleted}
+                />
+            ))}
+            <CreatePost onPostCreated={handlePostCreated} />
         </main>
     )
 }
