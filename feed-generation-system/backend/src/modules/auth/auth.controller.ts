@@ -1,6 +1,6 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { sendResponse } from "../../utils/sendResponse.js";
-import { registerUser, loginUser } from "./auth.service.js";
+import { registerUser, loginUser, getUsers } from "./auth.service.js";
 export const register = asyncHandler(async (req, res)=> {
     const user = await registerUser(req.body);
 
@@ -36,5 +36,15 @@ export const logout = asyncHandler(async(req ,res)=> {
         statusCode: 200,
         success: true,
         message: "User logged out"
+    })
+})
+
+export const getUsersController = asyncHandler(async(req,res)=> {
+    const users = await getUsers(req.user._id)
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "user fetched",
+        data: users
     })
 })

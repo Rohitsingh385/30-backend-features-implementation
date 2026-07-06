@@ -2,8 +2,7 @@ import { ApiError } from "../../utils/ApiError.js"
 import { User } from "./auth.model.js"
 import { LoginInput, RegisterInput } from "./auth.validation.js"
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-import { env } from "../../config/env.js"
+import { Follow } from "../follows/follow.model.js"
 import { generateToken } from "../../utils/generateToken.js"
 export const registerUser = async (data: RegisterInput) => {
     const existingUser = await User.findOne({
@@ -56,4 +55,34 @@ export const loginUser = async (data: LoginInput) => {
         user: userWithoutPassword,
         token
     }
+}
+export const getUsers = async(currentUserId: string)=> {
+    const users = await User.find({
+        _id: {
+            $ne: currentUserId
+        }
+    }).select("_id username")
+    const userIds = users.map((user) => user._id)
+
+    const followRelationships = await Follow.find({
+        followerId: currentUserId,
+        followingId: {
+            $in: userIds
+        }
+    }).select("followingId")
+
+    const followedUserIds = new Set(
+        followRelationships.map(
+            (relationship) => relationship.followingId.toString()
+        )
+    )
+
+    const usersWithFollowStatus = users.map((user)=> ({
+        ...user.toObject(),
+        isFollowing: followedUserIds.has(
+            user._id.toString()
+        )
+    }))
+
+    return usersWithFollowStatus
 }

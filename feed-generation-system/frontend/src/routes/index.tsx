@@ -4,18 +4,19 @@ import Register from "../pages/Register"
 import Dashboard from "../pages/Dashboard"
 import ProtectedRoute from "./ProtectedRoute";
 import Feed from "../pages/Feed";
+import User from "../pages/User";
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <Login/>
+        element: <Login />
     },
     {
         path: '/login',
-        element: <Login/>
+        element: <Login />
     },
     {
         path: '/register',
-        element: <Register/>
+        element: <Register />
     },
     {
         path: '/dashboard',
@@ -30,6 +31,13 @@ export const router = createBrowserRouter([
         element: (
             <ProtectedRoute>
                 <Feed />
+            </ProtectedRoute>
+        )
+    }, {
+        path: '/users',
+        element: (
+            <ProtectedRoute>
+                <User/>
             </ProtectedRoute>
         )
     }
