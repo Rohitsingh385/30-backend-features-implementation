@@ -1,11 +1,11 @@
 import { api } from "./axios";
 
 export const getUsers = ()=> {
-    return api.get("/users")
+    return api.get("/auth")
 }
 
 export const followUser = (userId: string) => {
-    return api.post(`follows/${userId}`)
+    return api.post(`/follows/${userId}`)
 }
 
 export const unfollowUser = (userId: string) => {

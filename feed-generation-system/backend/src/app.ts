@@ -24,7 +24,7 @@ app.get('/', (req,res)=> {
 app.use('/api/v1/auth', Auth)
 app.use('/api/v1/posts', PostRouter)
 app.use('/api/v1/likes', likeRouter)
-app.use('/api/v1/follow', FollowRouter)
+app.use('/api/v1/follows', FollowRouter)
 app.use((req,res)=> {
     res.status(404).json({
         success: false,
