@@ -1,4 +1,4 @@
-export interface PostRequest{
+export interface PostRequest {
     content: string
 }
 
@@ -7,11 +7,12 @@ export interface Post {
     author: PostAuthor;
     content: string;
     likesCount: number;
+    isLiked: boolean;
     commentsCount: number;
     createdAt: string;
     updatedAt: string;
 }
-export interface PostAuthor{
+export interface PostAuthor {
     _id: string;
     username: string
 }

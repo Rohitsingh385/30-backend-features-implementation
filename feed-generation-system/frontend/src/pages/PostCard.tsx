@@ -1,7 +1,7 @@
 import type { Post } from "../types/post";
 import { useState } from "react";
 import axios from "axios";
-import { deletePost } from "../api/posts";
+import { deletePost, likePost, unlikePost } from "../api/posts";
 
 interface PostCardProps {
     post: Post;
@@ -13,7 +13,8 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
 
     const [deleting, setDeleting] = useState(false)
     const [error, setError] = useState("")
-
+    const [isLiked, setIsLiked] = useState(post.isLiked)
+    const [likesCount, setLikesCount] = useState(post.likesCount)
     const handleDelete = async () => {
         setError("");
         setDeleting(true)
@@ -33,6 +34,19 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
             setDeleting(false)
         }
     }
+
+    const handleLikeToggle = async()=> {
+        
+        if(isLiked){
+            await unlikePost(post._id)
+            setIsLiked(false)
+            setLikesCount((prevCount) => prevCount - 1)
+        }else {
+            await likePost(post._id)
+            setIsLiked(true)
+            setLikesCount((prevCount)=> prevCount + 1)
+        }
+    }
     const isOwner = currentUserId === post.author._id;
     return (
         <article className="border rounded-lg p-4">
@@ -43,9 +57,15 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
                 {post.content}
             </p>
             <div className="mt-3 text-sm text-gray-500">
-                {post.likesCount} likes .{" "}
+                {likesCount} likes .{" "}
                 {post.commentsCount} comments
             </div>
+            <button 
+                type="button" 
+                onClick={handleLikeToggle}>
+
+                {isLiked? "Unlike": "Like"}
+            </button>
             {isOwner && (
                 <button
                     type="button"

@@ -17,7 +17,7 @@ export const createPostController = async(req: Request, res: Response)=> {
 }
 
 export const getPostController = async(req: Request, res: Response) => {
-    const posts = await getPosts();
+    const posts = await getPosts(req.user._id);
 
     return res.status(200).json({
         success: true,

@@ -7,6 +7,7 @@ import { createPostController, deletePostController, getPostController } from ".
 const router = Router()
 
 router.post("/", authMiddleware, validate(createPostSchema), createPostController)
-router.get("/", getPostController)
+router.get("/", authMiddleware, getPostController)
 router.delete("/:id", authMiddleware, validate(DeletePostSchema, "params"), deletePostController)
+
 export default router;

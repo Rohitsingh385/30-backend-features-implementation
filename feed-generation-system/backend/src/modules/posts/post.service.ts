@@ -1,7 +1,7 @@
 import { ApiError } from "../../utils/ApiError.js";
 import { Post } from "./post.model.js";
 import { DeletePostData, createPostData } from "./post.types.js";
-
+import { Like } from "../like/like.model.js";
 export const createPost = async ({ authorId, content }: createPostData) => {
     const post = await Post.create({
         author: authorId,
@@ -11,11 +11,27 @@ export const createPost = async ({ authorId, content }: createPostData) => {
     return post
 }
 
-export const getPosts = async () => {
+export const getPosts = async (userId: string) => {
     const posts = await Post.find()
         .populate("author", "username")
         .sort({ createdAt: -1 })
-    return posts
+    
+    const postIds = posts.map((post)=> post._id)
+    const userLikes = await Like.find({
+        userId,
+        postId: {
+            $in: postIds
+        }
+    }).select("postId")
+    const likedPostIds = new Set(
+        userLikes.map((like) => like.postId.toString())
+    )
+
+    const postWithLikeStatus = posts.map((post)=> ({
+        ...post.toObject(),
+        isLiked: likedPostIds.has(post._id.toString())
+    }))
+    return postWithLikeStatus
 }
 
 export const deletePost = async({postId, userId}: DeletePostData) => {
