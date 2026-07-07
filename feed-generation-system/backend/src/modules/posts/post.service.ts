@@ -2,6 +2,9 @@ import { ApiError } from "../../utils/ApiError.js";
 import { Post } from "./post.model.js";
 import { DeletePostData, createPostData } from "./post.types.js";
 import { Like } from "../like/like.model.js";
+import { Follow } from "../follows/follow.model.js";
+
+
 export const createPost = async ({ authorId, content }: createPostData) => {
     const post = await Post.create({
         author: authorId,
@@ -11,10 +14,28 @@ export const createPost = async ({ authorId, content }: createPostData) => {
     return post
 }
 
+
+
 export const getPosts = async (userId: string) => {
-    const posts = await Post.find()
-        .populate("author", "username")
-        .sort({ createdAt: -1 })
+    const followRelationships = await Follow.find({
+        followerId: userId
+    }).select("followingId")
+
+    const followedUserIds = followRelationships.map(
+        (relationship) => relationship.followingId
+    )
+
+    const feedAuthorIds = [
+        userId,
+        ...followedUserIds
+    ]
+
+    const posts = await Post.find({
+        author: {
+            $in: feedAuthorIds
+        }
+    }).populate("author", "username")
+      .sort({ createdAt: -1 })
     
     const postIds = posts.map((post)=> post._id)
     const userLikes = await Like.find({
@@ -23,6 +44,7 @@ export const getPosts = async (userId: string) => {
             $in: postIds
         }
     }).select("postId")
+
     const likedPostIds = new Set(
         userLikes.map((like) => like.postId.toString())
     )
