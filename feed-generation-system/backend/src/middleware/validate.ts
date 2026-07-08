@@ -1,10 +1,10 @@
 import { AnyZodObject, ZodError } from "zod/v3";
 import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/ApiError.js";
-type RequestSource = "body" | "params";
+type RequestSource = "body" | "params" | "query";
 export const validate = (schema: AnyZodObject, source: RequestSource = "body") => (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req[source]);
+        // console.log(req[source]);
         schema.parse(req[source]);
         next();
     } catch (error) {

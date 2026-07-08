@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { createPost, getPosts, deletePost } from "./post.service.js";
-
+import type { GetPostInputs } from "./post.schema.js";
 type DeletePostParams = {
     id: string;
 };
@@ -16,12 +16,20 @@ export const createPostController = async(req: Request, res: Response)=> {
     })
 }
 
-export const getPostController = async(req: Request, res: Response) => {
-    const posts = await getPosts(req.user._id);
+export const getPostController = async(req: Request<{},{}, {}, GetPostInputs>, res: Response) => {
+    
+    const { cursor, limit} = req.query
+    const result = await getPosts({
+        userId: req.user._id,
+        cursor,
+        limit
+    });
 
     return res.status(200).json({
         success: true,
-        data: posts 
+        data: result.data,
+        nextCursor: result.nextCursor,
+        hasNextPage: result.hasNextPage 
     })
 }
 

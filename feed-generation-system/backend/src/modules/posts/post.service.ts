@@ -1,6 +1,6 @@
 import { ApiError } from "../../utils/ApiError.js";
 import { Post } from "./post.model.js";
-import { DeletePostData, createPostData } from "./post.types.js";
+import { DeletePostData, createPostData, getPostData } from "./post.types.js";
 import { Like } from "../like/like.model.js";
 import { Follow } from "../follows/follow.model.js";
 
@@ -16,7 +16,7 @@ export const createPost = async ({ authorId, content }: createPostData) => {
 
 
 
-export const getPosts = async (userId: string) => {
+export const getPosts = async ({userId, cursor, limit}: getPostData) => {
     const followRelationships = await Follow.find({
         followerId: userId
     }).select("followingId")
@@ -30,14 +30,33 @@ export const getPosts = async (userId: string) => {
         ...followedUserIds
     ]
 
-    const posts = await Post.find({
+    const postFilter : {
+        author: {
+            $in: typeof feedAuthorIds
+        };
+        createdAt?: {
+            $lt: Date
+        };
+    }=  {
         author: {
             $in: feedAuthorIds
         }
-    }).populate("author", "username")
+    }
+    if(cursor){
+        postFilter.createdAt = {
+            $lt: new Date(cursor)
+        }
+    }
+    const posts = await Post.find(postFilter)
+      .populate("author", "username")
       .sort({ createdAt: -1 })
+      .limit(limit + 1)
     
-    const postIds = posts.map((post)=> post._id)
+    const hasNextPage = posts.length > limit
+    const pagePost = hasNextPage ? posts.slice(0, limit) : posts
+    const lastPost = pagePost[pagePost.length - 1]
+    const nextCursor = hasNextPage && lastPost ? lastPost.createdAt.toISOString() : null
+    const postIds = pagePost.map((post)=> post._id)
     const userLikes = await Like.find({
         userId,
         postId: {
@@ -49,11 +68,15 @@ export const getPosts = async (userId: string) => {
         userLikes.map((like) => like.postId.toString())
     )
 
-    const postWithLikeStatus = posts.map((post)=> ({
+    const postWithLikeStatus = pagePost.map((post)=> ({
         ...post.toObject(),
         isLiked: likedPostIds.has(post._id.toString())
     }))
-    return postWithLikeStatus
+    return {
+        data: postWithLikeStatus,
+        nextCursor,
+        hasNextPage
+    }
 }
 
 export const deletePost = async({postId, userId}: DeletePostData) => {
