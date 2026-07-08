@@ -12,6 +12,9 @@ export default function Feed() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
     const [user, setUser] = useState<User | null>(null)
+    const [nextCursor, setNextCursor] = useState<string | null>(null)
+    const [hasNextPage, setHasNextPage] = useState(false)
+    const [loadingMore, setLoadingMore] = useState(false)
     const fetchPosts = async () => {
         setLoading(true);
         setError("")
@@ -19,6 +22,8 @@ export default function Feed() {
         try {
             const response = await getPost()
             setPosts(response.data.data)
+            setNextCursor(response.data.nextCursor)
+            setHasNextPage(response.data.hasNextPage)
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 setError(
@@ -40,6 +45,27 @@ export default function Feed() {
         fetchCurrentUser();
     }, [])
 
+    const handleLoadMore = async ()=> {
+        if(!nextCursor || loadingMore){
+            return
+        }
+        try{
+            setLoadingMore(true)
+            const response = await getPost(nextCursor)
+            console.log(response)
+            setPosts((currentPost)=> [
+                ...currentPost,
+                ...response.data.data
+            ])
+
+            setNextCursor(response.data.nextCursor)
+            setHasNextPage(response.data.hasNextPage)
+        }catch{
+            setError("Failed to load more posts")
+        }finally{
+            setLoadingMore(false)
+        }
+    }
     if (loading) {
         return <p>Loading posts..</p>
     }
@@ -73,6 +99,17 @@ export default function Feed() {
                     onPostDeleted={handlePostDeleted}
                 />
             ))}
+            {
+                hasNextPage && (
+                    <button
+                        type="button"
+                        onClick={handleLoadMore}
+                        disabled={loadingMore}
+                    >
+                        {loadingMore ? "Loading..." : "Load More"}
+                    </button>
+                )
+            }
             <CreatePost onPostCreated={handlePostCreated} />
         </main>
     )

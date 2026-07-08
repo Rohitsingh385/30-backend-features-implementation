@@ -16,3 +16,10 @@ export interface PostAuthor {
     _id: string;
     username: string
 }
+
+export interface feedResponse {
+    success: boolean;
+    data: Post[];
+    nextCursor: string | null;
+    hasNextPage: boolean;
+} 

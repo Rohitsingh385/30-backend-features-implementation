@@ -23,4 +23,8 @@ const postSchema = new Schema({
     },
 }, {timestamps: true})
 
+postSchema.index({
+    author: 1,
+    createdAt: -1
+})
 export const Post = model("Post", postSchema)

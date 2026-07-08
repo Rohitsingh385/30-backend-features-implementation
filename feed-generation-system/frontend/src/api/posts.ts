@@ -1,11 +1,18 @@
 import { api } from "./axios";
-import type { Post, PostRequest } from "../types/post";
+import type { Post, PostRequest, feedResponse } from "../types/post";
 
 export const createPost = (data: PostRequest)=> {
     return api.post("/posts", data)
 }
-export const getPost = () => {
-    return api.get("/posts")
+export const getPost = (cursor?: string) => {
+    // return api.get("/posts")
+
+    return api.get<feedResponse>("/posts", {
+        params: {
+            limit: 5,
+            cursor
+        }
+    })
 }
 
 export const deletePost = (postId: string)=> {
