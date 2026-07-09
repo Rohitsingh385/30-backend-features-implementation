@@ -6,6 +6,7 @@ import Auth from "./modules/auth/auth.route.js"
 import PostRouter from "./modules/posts/post.routes.js"
 import likeRouter from "./modules/like/like.routes.js"
 import FollowRouter from "./modules/follows/follow.routes.js"
+
 const app = express()
 app.use(cors({
     origin: "http://localhost:5173"

@@ -16,7 +16,7 @@ export const registerSchema = z.object({
         .max(100)
 })
 export const loginSchema = z.object({
-        email: z
+    email: z
         .email('Invalid email address')
         .trim()
         .toLowerCase(),

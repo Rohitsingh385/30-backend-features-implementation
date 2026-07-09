@@ -13,3 +13,24 @@ export const getCurrentUser = () => {
 export const logoutUser = () => {
     return api.post("/auth/logout")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
