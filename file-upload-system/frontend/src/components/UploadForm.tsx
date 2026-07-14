@@ -1,23 +1,41 @@
 import { useState } from "react"
+import api from "../api/axios"
 
-const UploadForm = ()=> {
+interface Props {
+    onUploadSuccess: ()=> void
+}
+const UploadForm = ({onUploadSuccess}: Props) => {
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState("")
+
+    const handleUpload = async () => {
+        console.log(selectedFile)
+        if (!selectedFile) return;
+
+        const formData = new FormData();
+       
+        formData.append("file", selectedFile)
+        
+        await api.post("/upload", formData)
+        onUploadSuccess()
+        alert("Upload Successful")
+    }
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         const file = event.target.files?.[0]
 
-        if(!file) return;
+        if (!file) return;
 
         setPreviewUrl(URL.createObjectURL(file))
+        setSelectedFile(file)
     }
     return (
         <div className="space-y-4">
-            <input 
-             type="file"
-             accept="image/*"
-             onChange={handleFileChange}  
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
             />
 
             {selectedFile && (
@@ -31,12 +49,18 @@ const UploadForm = ()=> {
                 </div>
             )}
             {previewUrl && (
-                <img 
-                    src={previewUrl} 
+                <img
+                    src={previewUrl}
                     alt="Preview"
                     className="h-64 w-full rounded border object-contain"
                 />
             )}
+
+            <button
+                onClick={handleUpload}
+                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >   Upload
+            </button>
         </div>
     )
 }

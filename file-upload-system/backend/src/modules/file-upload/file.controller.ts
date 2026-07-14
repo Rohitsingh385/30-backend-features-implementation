@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
-import mongoose from "mongoose";
-import { deleteFile, getMyFiles, uploadFile } from "./file.service.js";
+import { deleteFile, getMyFiles, uploadFile ,getFileById } from "./file.service.js";
+
+const DEMO_USER_ID = "68700123456789abcdef1234";
 
 export const uploadFileController = async (req: Request, res: Response) => {
     
@@ -11,7 +12,7 @@ export const uploadFileController = async (req: Request, res: Response) => {
         })
     }
 
-    const ownerId = new mongoose.Types.ObjectId().toString()
+    const ownerId = DEMO_USER_ID
 
     const uploadedFile = await uploadFile({
         file: req.file,
@@ -24,12 +25,15 @@ export const uploadFileController = async (req: Request, res: Response) => {
     })
 }
 
+
 export const deleteFileController = async(req: Request, res: Response)=> {
 
+    console.log('dasdasd')
     const { id } = req.params;
-
-    const ownerId = new mongoose.Types.ObjectId().toString()
-
+    console.log(id)
+    const ownerId = DEMO_USER_ID
+    
+  
     await deleteFile({
         fileId: id,
         ownerId
@@ -42,6 +46,7 @@ export const deleteFileController = async(req: Request, res: Response)=> {
 }
 
 export const getMyfilesController = async(req: Request, res: Response)=> {
+    
     const ownerId = DEMO_USER_ID
 
     const files = await getMyFiles(ownerId)

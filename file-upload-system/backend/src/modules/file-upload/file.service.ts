@@ -1,6 +1,6 @@
 
 import { File, StorageProvider } from "./file.model.js"
-import { uploadToCloudinary , deleteFromCloudinary } from "./cloudinary.service.js";
+import { uploadToCloudinary, deleteFromCloudinary } from "./cloudinary.service.js";
 
 interface UploadFileInput {
     file: Express.Multer.File;
@@ -8,7 +8,7 @@ interface UploadFileInput {
 
 }
 
-interface DeleteFileInput {
+export interface DeleteFileInput {
     fileId: string,
     ownerId: string
 }
@@ -38,15 +38,16 @@ export const uploadFile = async ({ file, ownerId }: UploadFileInput) => {
     }
 }
 
-export const deleteFile = async({fileId, ownerId}: DeleteFileInput)=> {
-
+export const deleteFile = async ({ fileId, ownerId }: DeleteFileInput) => {
+    console.log(fileId)
+    console.log(ownerId)
     const file = await File.findById(fileId)
-
-    if(!file){
+    console.log(file)
+    if (!file) {
         throw new Error("File not found")
     }
 
-    if(file.ownerId.toString() !== ownerId){
+    if (file.ownerId.toString() !== ownerId) {
         throw new Error("You are not authorized to delete this file")
     }
 
@@ -57,19 +58,19 @@ export const deleteFile = async({fileId, ownerId}: DeleteFileInput)=> {
     return
 }
 
-export const getMyFiles = async(ownerId: string) => {
+export const getMyFiles = async (ownerId: string) => {
     return await File.find({ ownerId })
         .sort({ createdAt: -1 })
         .select("-__v")
 }
 
-export const getFileById = async(fileId: string, ownerId: string)=> {
-    const file =  File.find({
+export const getFileById = async (fileId: string, ownerId: string) => {
+    const file = File.find({
         _id: fileId,
         ownerId
     })
 
-    if(!file){
+    if (!file) {
         throw new Error("File not found")
     }
 

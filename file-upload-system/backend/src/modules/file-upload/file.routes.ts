@@ -5,8 +5,8 @@ import { upload } from "./upload.middleware.js"
 const router = Router()
 
 router.post("/upload", upload.single("file"), uploadFileController)
-router.delete("/:id", deleteFileController)
-router.get("/", getMyfilesController)
+router.delete("/files/:id", deleteFileController)
+router.get("/files", getMyfilesController)
 router.get("/:id", getMyfilesByIdController)
 
 

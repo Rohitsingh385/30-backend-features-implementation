@@ -20,6 +20,7 @@ app.get("/health", (req, res) => {
 })
 
 app.use("/api/v1/", FileUpload)
+
 const startServer = async () => {
     await connectDB()
 
