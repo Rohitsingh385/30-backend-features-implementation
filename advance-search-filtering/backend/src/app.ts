@@ -5,6 +5,6 @@ const app = express()
 
 app.use(express.json())
 
-app.use("/api/v1/Product", Product)
+app.use("/api/v1/", Product)
 
 export default app

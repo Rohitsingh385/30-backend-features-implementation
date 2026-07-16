@@ -1,15 +1,25 @@
 import { Product } from "./product.model.js"
-import type { ProductValidateInput } from "./product.validation.js"
+import type { ProductCreateInput, ProductQueryInput } from "./product.validation.js"
+import { buildFilter, buildSort } from "./product.query.js"
+import { asyncHandler } from "../../utils/asyncHandler.js"
 
-export const addProduct = async (productData: ProductValidateInput) => {
+export const addProduct = async (productData: ProductCreateInput) => {
 
-    await Product.create({
-        name: productData.body.name,
-        description:  productData.body.description,
-        category: productData.body.category,
-        brand: productData.body.brand,
-        price: productData.body.price,
-        rating: productData.body.rating,
-        stock:productData.body.stock
-    })
+    const product = await Product.create(productData)
+
+    return product
+}
+
+export const getProductsService = async (query: ProductQueryInput["query"])=> {
+
+    const filter = buildFilter(query)
+    const sort = buildSort(query.sort)
+
+    const limit = query.limit ?? 20
+
+    const products = await Product.find(filter)
+        .sort(sort)
+        .limit(limit)
+
+    return products
 }

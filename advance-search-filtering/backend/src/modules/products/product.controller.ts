@@ -1,19 +1,25 @@
 import type { Request, Response } from "express"
-import type { ProductValidateInput } from "./product.validation.js"
-import { addProduct } from "./product.service.js"
+import { addProduct, getProductsService } from "./product.service.js"
 import { sendResponse } from "../../utils/sendResponse.js"
-export const addProductController = async (req: Request<ProductValidateInput>, res: Response) => {
-    const productData = req.body
-    const data = await addProduct({
-        productData
-    })
+import { asyncHandler } from "../../utils/asyncHandler.js"
+export const addProductController = asyncHandler(async (req: Request,  res: Response) => {
+  
+    const data = await addProduct(req.body)
 
-    return sendResponse(
-        true,
-        "Product added",
+    return sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: "Product added",
         data
-    )
-}
-export const getProductController = async (req: Request, res: Response) => {
+    })
+})
+export const getProductController = asyncHandler(async (req: Request, res: Response) => {
+    const products = await getProductsService(req.query);
 
-}
+    return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Products fetched successfully",
+        data: products
+    })
+})

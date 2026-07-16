@@ -16,7 +16,8 @@ const ProductSchema = new Schema({
     },
     category: {
         type: String,
-        trim: true
+        trim: true,
+        lowercase: true
     },
     brand: {
         type: String,
@@ -29,9 +30,8 @@ const ProductSchema = new Schema({
     }, 
     rating: {
         type: Number,
-        min: 0,
+        min: 1,
         max: 5,
-        default: 0
     },
     stock: {
         type: Number,

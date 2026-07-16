@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { addProductController, getProductController } from "./product.controller.js";
 import { validate } from "../../middlewares/validate.js";
-import { ProductValidateSchema } from "./product.validation.js";
+import { ProductCreateSchema, ProductQuerySchema } from "./product.validation.js";
 const router = Router()
 
 
-router.get("/product", getProductController)
+router.get("/products", validate(ProductQuerySchema), getProductController)
 
-router.post("/product", validate(ProductValidateSchema), addProductController)
+router.post("/products", validate(ProductCreateSchema), addProductController)
 
 export default router
