@@ -9,6 +9,7 @@ export interface Post {
     likesCount: number;
     isLiked: boolean;
     commentsCount: number;
+    isBookmarked: boolean;
     createdAt: string;
     updatedAt: string;
 }

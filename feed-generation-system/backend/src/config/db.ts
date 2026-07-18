@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 export const connectDB = async()=> {
     try{
-        
+        console.log(env)
         if(!env.MONGO_URI){
            throw new Error("Missing MONGO URI")
         }

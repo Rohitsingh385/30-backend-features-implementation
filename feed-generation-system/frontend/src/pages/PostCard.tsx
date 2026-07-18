@@ -2,6 +2,8 @@ import type { Post } from "../types/post";
 import { useState } from "react";
 import axios from "axios";
 import { deletePost, likePost, unlikePost } from "../api/posts";
+import {BookmarkButton} from "../components/BookmarkButton"
+import { saveBookmark, removeBookmark } from "../api/bookmark";
 
 interface PostCardProps {
     post: Post;
@@ -15,6 +17,27 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
     const [error, setError] = useState("")
     const [isLiked, setIsLiked] = useState(post.isLiked)
     const [likesCount, setLikesCount] = useState(post.likesCount)
+    const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked)
+    const [isLoadingBookmark, setIsLoadingBookmark] = useState(false)
+    const handleBookmarkToggle = async () => {
+        if (isLoadingBookmark) return;
+
+        const previousValue = isBookmarked;
+        setIsLoadingBookmark(true)
+        setIsBookmarked(!previousValue)
+        try {
+            if (previousValue) {
+                await removeBookmark(post._id)
+            } else {
+                await saveBookmark(post._id)
+            }
+        } catch (error) {
+            setIsBookmarked(previousValue)
+            console.error(error)
+        } finally {
+            setIsLoadingBookmark(false)
+        }
+    }
     const handleDelete = async () => {
         setError("");
         setDeleting(true)
@@ -35,16 +58,16 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
         }
     }
 
-    const handleLikeToggle = async()=> {
-        
-        if(isLiked){
+    const handleLikeToggle = async () => {
+
+        if (isLiked) {
             await unlikePost(post._id)
             setIsLiked(false)
             setLikesCount((prevCount) => prevCount - 1)
-        }else {
+        } else {
             await likePost(post._id)
             setIsLiked(true)
-            setLikesCount((prevCount)=> prevCount + 1)
+            setLikesCount((prevCount) => prevCount + 1)
         }
     }
     const isOwner = currentUserId === post.author._id;
@@ -60,11 +83,11 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
                 {likesCount} likes .{" "}
                 {post.commentsCount} comments
             </div>
-            <button 
-                type="button" 
+            <button
+                type="button"
                 onClick={handleLikeToggle}>
 
-                {isLiked? "Unlike": "Like"}
+                {isLiked ? "Unlike" : "Like"}
             </button>
             {isOwner && (
                 <button
@@ -82,6 +105,11 @@ export default function PostCard({ post, currentUserId, onPostDeleted }: PostCar
                     </p>
                 )
             }
+            <BookmarkButton
+                isBookmarked={isBookmarked}
+                onToggle={handleBookmarkToggle}
+                disabled={isLoadingBookmark}
+            />
         </article>
     )
 }
