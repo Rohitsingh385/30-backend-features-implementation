@@ -99,3 +99,28 @@ export const deletePost = async({postId, userId}: DeletePostData) => {
 }
 
 
+export const getPostsByTag = async(tag: string)=> {
+    const normalizedTags = tag.trim().toLowerCase()
+
+    const posts = await Post.find({
+        tags: normalizedTags
+    }).populate("author", "username")
+    
+    return posts;
+}
+
+export const getPostsByTags = aysnc(tags: string) => {
+    const normalizedTags = tags     
+        .split(",")
+        .map(tag => tag.trim().toLowerCase())
+        .filter(Boolean)
+
+    return await Post.find({
+        tags: {
+            $in: normalizedTags
+        }
+        // tags: {
+        //     $all: normalizedTags
+        // }
+    })
+}

@@ -5,7 +5,16 @@ export const createPostSchema  = z.object({
         .string()
         .trim()
         .min(1, "Content is required")
-        .max(1000, "Content cannot exceed 1000 characters")
+        .max(1000, "Content cannot exceed 1000 characters"),
+    tags: z 
+        .array(
+            z.string()
+                .trim()
+                .min(1)
+                .max(30)
+        )
+        .max(5)
+        .optional()
 })
 export const DeletePostSchema = z.object({
     id: z
@@ -28,6 +37,13 @@ export const getPostsQuerySchema = z.object({
         .default(10)
 })
 
+export const getPostsByTagSchema = z.object({
+    tags: z
+        .string()
+        .min(1)
+})
+
+export type GetPostByTagInputs = z.infer<typeof getPostsByTagSchema>
 export type GetPostInputs = z.infer<typeof getPostsQuerySchema>
 export type CreatePostInput = z.infer<typeof createPostSchema>
 export type DeletePostInput = z.infer<typeof DeletePostSchema>

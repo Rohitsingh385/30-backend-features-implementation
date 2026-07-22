@@ -21,6 +21,11 @@ const postSchema = new Schema({
         type: Number,
         default: 0       
     },
+    tags: {
+        type: [String],
+        default: [],
+        index: true
+    }
 }, {timestamps: true})
 
 postSchema.index({
