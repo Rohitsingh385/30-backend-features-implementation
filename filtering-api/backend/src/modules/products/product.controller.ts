@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { createProduct, getProductById, getProducts, updateProductById } from "./product.service"
 import { asyncHandler } from "../../utils/asyncHandler"
-import { getProductByIdInput, updateProductInput } from "./product.validation"
+import { getProductByIdInput, updateProductInput, getProductsInput } from "./product.validation"
 export const createProductController = asyncHandler(async (req, res) => {
 
     const result = await createProduct(req.body)
@@ -12,13 +12,19 @@ export const createProductController = asyncHandler(async (req, res) => {
     })
 })
 
-export const getProductsController = asyncHandler(async (req, res) => {
-    const result = await getProducts()
+export const getProductsController = asyncHandler(async (req: Request<{},{},{}, getProductsInput["query"]>, res: Response) => {
+    console.log(req.query)
+    const result = await getProducts(req.query)
 
-    return res.status(201).json({
+    console.log(result)
+    return res.status(200).json({
         success: true,
         message: 'success',
-        data: result
+        data: result.products,
+        pagination: {
+            page: result.page,
+            limit: result.limit
+        }
     })
 })
 

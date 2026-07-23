@@ -2,11 +2,18 @@ import { AnyZodObject, ZodError } from "zod"
 import { Request, Response, NextFunction } from "express"
 import { ApiError } from "../utils/ApiError"
 
-type RequestSource = "body" | "params" | "query"
 
-export const validate = (schema: AnyZodObject, source: RequestSource = "body") => (req: Request, res: Response, next: NextFunction) => {
+export const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
     try {
-        schema.parse(req[source])
+       const parsed = schema.parse({
+        body: req.body,
+        params: req.params,
+        query: req.query
+       })
+       req.body = parsed.body
+       req.params = parsed.params
+       req.query = parsed.params
+       next()
     } catch (error) {
         if (error instanceof ZodError) {
             return next(

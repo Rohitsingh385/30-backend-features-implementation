@@ -103,13 +103,62 @@ export const getProductByIdSchema = z.object({
 
 export const getProductsSchema = z.object({
     query: z.object({
-        category: z 
+        category: z
             .string()
             .trim()
             .toLowerCase()
-            .optional()
+            .optional(),
+        brand: z
+            .string()
+            .trim()
+            .toLowerCase()
+            .optional(),
+        minPrice: z
+            .coerce
+            .number()
+            .min(0)
+            .optional(),
+        maxPrice: z
+            .coerce
+            .number()
+            .min(0)
+            .optional(),
+        minRating: z
+            .coerce
+            .number()
+            .min(0)
+            .max(5)
+            .optional(),
+        sort: z
+            .enum([
+                "price",
+                "-price",
+                "rating",
+                "-rating",
+                "createdAt",
+                "-createdAt"
+            ])
+            .optional(),
+        search: z   
+            .string()
+            .trim()
+            .optional(),
+        page: z
+            .coerce
+            .number()
+            .int()
+            .min(1)
+            .default(1),   
+        limit: z
+            .coerce
+            .number()
+            .int()
+            .min(1)
+            .max(100)
+            .default(20),            
     })
 })
+export type getProductsInput = z.infer<typeof getProductsSchema>
 export type getProductByIdInput = z.infer<typeof getProductByIdSchema>
 export type createProductInput = z.infer<typeof createProductSchema>
 export type updateProductInput = z.infer<typeof updateProductSchema>
