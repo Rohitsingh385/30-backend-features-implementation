@@ -1,6 +1,7 @@
 import { Product } from "./product.model"
 import { createProductInput, updateProductInput, getProductsInput } from "./product.validation"
 import { ApiError } from "../../utils/ApiError"
+import { ProductQueryBuilder } from "./product.query.builder"
 export const createProduct = async (data: createProductInput["body"]) => {
 
     return await Product.create(data)
@@ -8,82 +9,31 @@ export const createProduct = async (data: createProductInput["body"]) => {
 
 export const getProducts = async (filters: getProductsInput["query"]) => {
 
-    const query = {}
+    const builder = new ProductQueryBuilder(
+        Product.find(),
+        filters
+    )
+    builder.filter().search()
 
-    if (filters.category) {
-        query.category = filters.category
-    }
-    if (filters.brand) {
-        query.brand = filters.brand
-    }
-    if (filters.minPrice || filters.maxPrice) {
-        query.price = {}
-    }
-    if (filters.minPrice) {
-        query.price.$gte = filters.minPrice
-    }
-    if (filters.maxPrice) {
-        query.price.$lte = filters.maxPrice
-    }
-    if (filters.minRating) {
-        query.rating = {
-            $gte: filters.minRating
-        }
-    }
-    // sort query
-    //console.log(query)
-    const sortQuery: Record<string, 1 | -1> = {
-        createdAt: -1,
-    }
+    const total = await Product.countDocuments(builder.getFilter())
 
-    if (filters.sort === "price") {
-        sortQuery.price = 1
-    }
-    if (filters.sort === "-price") {
-        sortQuery.price = -1
-    }
-    if (filters.sort === "rating") {
-        sortQuery.rating = 1
-    }
-    if (filters.sort === "-rating") {
-        sortQuery.rating = -1
-    }
-    if (filters.sort === "createdAt") {
-        sortQuery.rating = 1
-    }
-    if (filters.sort === "-createdAt") {
-        sortQuery.rating = -1
-    }
-    
-    if(filters.search){
-        query.$or = [
-            {
-                name: {
-                    $regex: filters.search,
-                    $options: "i"
-                },
-            },
-            {
-                description: {
-                    $regex: filters.search,
-                    $options: "i"
-                }
-            }
-        ]
-    }
+    builder.sort().paginate()
+
+    const products = await builder
+        .build()
     const page = filters.page ?? 1;
     const limit = filters.limit ?? 20;
-    const skip = (page -1) * limit
-    console.dir(query, {depth: null})
-    const products = await Product
-        .find(query)
-        .sort(sortQuery)
-        .skip(skip)
-        .limit(limit)
+    const totalPages = Math.ceil(total / limit);
     return {
-        page,
-        limit,
-        products
+        products,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1
+        }
     }
 }
 

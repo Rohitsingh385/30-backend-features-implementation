@@ -15,4 +15,19 @@ const ProductSchema = new Schema({
     timestamps: true
 })
 
+ProductSchema.index({
+    category: 1
+})
+ProductSchema.index({
+    brand: 1
+})
+ProductSchema.index({
+    price: 1
+})
+
+ProductSchema.index({
+    category: 1,
+    brand: 1
+})
+
 export const Product = model("Product", ProductSchema)

@@ -16,15 +16,12 @@ export const getProductsController = asyncHandler(async (req: Request<{},{},{}, 
     console.log(req.query)
     const result = await getProducts(req.query)
 
-    console.log(result)
+   // console.log(result)
     return res.status(200).json({
         success: true,
         message: 'success',
         data: result.products,
-        pagination: {
-            page: result.page,
-            limit: result.limit
-        }
+        pagination: result.pagination
     })
 })
 
