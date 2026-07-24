@@ -12,11 +12,11 @@ export const createProductController = asyncHandler(async (req, res) => {
     })
 })
 
-export const getProductsController = asyncHandler(async (req: Request<{},{},{}, getProductsInput["query"]>, res: Response) => {
+export const getProductsController = asyncHandler(async (req: Request<{}, {}, {}, getProductsInput["query"]>, res: Response) => {
     console.log(req.query)
     const result = await getProducts(req.query)
 
-   // console.log(result)
+    // console.log(result)
     return res.status(200).json({
         success: true,
         message: 'success',
@@ -35,7 +35,7 @@ export const getProductByIdController = asyncHandler(async (req: Request<getProd
     })
 })
 
-export const updateProductByIdController = asyncHandler(async(req: Request<getProductByIdInput["params"],{}, updateProductInput["body"]>, res: Response)=> {
+export const updateProductByIdController = asyncHandler(async (req: Request<getProductByIdInput["params"], {}, updateProductInput["body"]>, res: Response) => {
     const { productId } = req.params
 
     const result = await updateProductById(productId, req.body)
